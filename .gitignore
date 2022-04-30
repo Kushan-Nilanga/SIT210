@@ -2,3 +2,6 @@
 target
 *.mp4
 *.mov
+docs
+
+node_modules
