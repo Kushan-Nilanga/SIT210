@@ -81,14 +81,14 @@ void loop(){
                 }
             }
         }
-
+        // free the uuid array
         free(foundUUID);
     }
 
     Serial.println();
 }
 
-
+// send data to the server
 void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context) {
     Serial.println("data received");
 }
