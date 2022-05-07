@@ -11,7 +11,7 @@ export default function Home() {
                     <MyContainers></MyContainers>
                     <ListGroup.Item>
                         <Button href="/add_container" variant="outline-primary">
-                            + Add
+                            Add
                         </Button>
                     </ListGroup.Item>
                 </ListGroup>
