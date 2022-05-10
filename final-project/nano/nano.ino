@@ -37,6 +37,7 @@ void setup()
     }
 
     // Set advertised local name and services UUID
+    BLE.setDeviceName("Smart Container");
     BLE.setLocalName("Container");
 
     // advertised service
