@@ -15,9 +15,9 @@ def get_data(device):
     print("getting data from", device)
     try:
         req = GATTRequester(device)
-        temp = req.read_by_uuid("2e0d3c00-0001-11ec-9d64-0242ac120002")
-        hum = req.read_by_uuid("2e0d3c00-0002-11ec-9d64-0242ac120002")
-        dpt = req.read_by_uuid("2e0d3c00-0003-11ec-9d64-0242ac120002")
+        temp = req.read_by_uuid("2e0d3c00-0001-11ec-9d64-0242ac120002")[0]
+        hum = req.read_by_uuid("2e0d3c00-0002-11ec-9d64-0242ac120002")[0]
+        dpt = req.read_by_uuid("2e0d3c00-0003-11ec-9d64-0242ac120002")[0]
         return temp, hum, dpt
 
     except:
