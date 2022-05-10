@@ -20,4 +20,8 @@ module.exports = {
             },
         ];
     },
+    env: {
+        mongodburl:
+            "mongodb+srv://root:toor@cluster0.g7vp8.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+    },
 };

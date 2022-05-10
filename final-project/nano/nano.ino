@@ -9,7 +9,7 @@
 #include <ArduinoBLE.h>
 
 // setup BLE
-BLEService dataService("2932878e-0000-11ec-9d64-0242ac120002");
+BLEService dataService("2e0d3c00-0000-11ec-9d64-0242ac120002");
 
 // BLE characteristics
 BLEFloatCharacteristic tem("2e0d3c00-0001-11ec-9d64-0242ac120002", BLERead); // Temperature

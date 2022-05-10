@@ -9,6 +9,7 @@ const db = new Low(adapter);
 
 export default async function handler(req, res) {
     await db.read();
+
     db.data ||= { container: {} };
 
     const payload = req.body.payload;
