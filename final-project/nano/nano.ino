@@ -9,12 +9,12 @@
 #include <ArduinoBLE.h>
 
 // setup BLE
-BLEService dataService("2e0d3c00-0000-11ec-9d64-0242ac120002");
+BLEService dataService("19b10000-e8f2-537e-4f6c-d104768a1214");
 
 // BLE characteristics
-BLEFloatCharacteristic tem("2e0d3c00-0001-11ec-9d64-0242ac120002", BLERead); // Temperature
-BLEFloatCharacteristic hum("2e0d3c00-0002-11ec-9d64-0242ac120002", BLERead); // Humidity
-BLEFloatCharacteristic dpt("2e0d3c00-0003-11ec-9d64-0242ac120002", BLERead); // Depths
+BLEFloatCharacteristic tem("19b10001-e8f2-537e-4f6c-d104768a1214", BLERead); // Temperature
+BLEFloatCharacteristic hum("19b10002-e8f2-537e-4f6c-d104768a1214", BLERead); // Humidity
+BLEFloatCharacteristic dpt("19b10003-e8f2-537e-4f6c-d104768a1214", BLERead); // Depths
 
 // setup() runs once, when the device is first turned on.
 void setup()
@@ -36,14 +36,8 @@ void setup()
         }
     }
 
-    // writing initial values
-    tem.writeValue((float)0.0);
-    hum.writeValue((float)0.0);
-    dpt.writeValue((float)0.0);
-
     // Set advertised local name and services UUID
-    BLE.setDeviceName("Arduino Nano 33 IoT");
-    BLE.setLocalName("Arduino Container");
+    BLE.setLocalName("Container");
 
     // advertised service
     BLE.setAdvertisedService(dataService);
@@ -56,6 +50,11 @@ void setup()
     // BLE service
     BLE.addService(dataService);
 
+    // writing initial values
+    tem.writeValue((float)0.0);
+    hum.writeValue((float)0.0);
+    dpt.writeValue((float)0.0);
+
     // advertise data
     BLE.advertise();
 }
@@ -66,14 +65,20 @@ void loop()
     // Listen to central
     BLEDevice central = BLE.central();
 
+    // delay till the central device connects
+    delay(500);
+
     // while central is connected
     while (central.connected())
     {
+        digitalWrite(LED_BUILTIN, HIGH);
+
         // updating values
         hum.writeValue(random(100));
         tem.writeValue(random(100));
         dpt.writeValue(random(100));
 
-        delay(2000);
+        delay(1000);
+        digitalWrite(LED_BUILTIN, LOW);
     }
 }
