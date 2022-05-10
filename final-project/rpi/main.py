@@ -12,6 +12,7 @@ def get_devices():
 
 
 def get_data(device):
+    print("getting data from", device)
     try:
         req = GATTRequester(device)
         temp = req.read_by_uuid("2e0d3c00-0001-11ec-9d64-0242ac120002")
@@ -28,8 +29,11 @@ if __name__ == "__main__":
 
     while(True):
         devices = get_devices()
+        print("Searching for devices", devices)
 
         for device in devices:
-            print(get_data(device))
+            data = get_data(device)
+            if data is not None:
+                print(data)
 
         time.sleep(10)
