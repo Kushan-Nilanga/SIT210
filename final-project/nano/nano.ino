@@ -36,6 +36,11 @@ void setup()
         }
     }
 
+    // writing initial values
+    tem.writeValue((float)0.0);
+    hum.writeValue((float)0.0);
+    dpt.writeValue((float)0.0);
+
     // Set advertised local name and services UUID
     BLE.setDeviceName("Arduino Nano 33 IoT");
     BLE.setLocalName("Arduino Container");
@@ -50,11 +55,6 @@ void setup()
 
     // BLE service
     BLE.addService(dataService);
-
-    // writing initial values
-    tem.writeValue((float)0.0);
-    hum.writeValue((float)0.0);
-    dpt.writeValue((float)0.0);
 
     // advertise data
     BLE.advertise();
@@ -74,6 +74,6 @@ void loop()
         tem.writeValue(random(100));
         dpt.writeValue(random(100));
 
-        delay(500);
+        delay(2000);
     }
 }
