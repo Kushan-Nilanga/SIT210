@@ -15,7 +15,15 @@ export default async function handler(req, res) {
     const container_uuid = payload.uuid;
     const data = payload.data || null;
 
-    db.data.container[container_uuid].logs.push(JSON.parse(data));
+    var parsed = JSON.parse(data);
+
+    var keyed = {
+        tem: parsed["19b10001-e8f2-537e-4f6c-d104768a1214"],
+        hum: parsed["19b10002-e8f2-537e-4f6c-d104768a1214"],
+        dpt: parsed["19b10003-e8f2-537e-4f6c-d104768a1214"],
+    };
+
+    db.data.container[container_uuid].logs.push(keyed);
 
     res.status(200).json(db.data.container[container_uuid]);
 

@@ -3,6 +3,7 @@ from time import sleep
 from requests import get, post
 from struct import unpack
 from json import dumps
+from datetime import datetime
 
 
 devices = []
@@ -14,6 +15,7 @@ def get_device_data(device):
         peripheral = Peripheral(device)
         dataService = peripheral.getServiceByUUID(dataServiceUUID)
         data = {}
+        data["time"] = str(datetime.now())
         for characteristic in dataService.getCharacteristics():
             data[str(characteristic.uuid)] = unpack(
                 'f', characteristic.read())[0]
