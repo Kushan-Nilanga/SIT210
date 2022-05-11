@@ -34,8 +34,9 @@ def post_device_data(url, device, data):
     if data is None:
         return
 
+    data = dumps(data)
     try:
-        post(url, {"uuid": device, "data": dumps(data)})
+        post(url, {"uuid": device, "data": data})
         print("data posted")
     except:
         print("data post to failed")
