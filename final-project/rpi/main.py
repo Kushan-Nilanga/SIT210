@@ -35,7 +35,6 @@ def post_device_data(url, device, data):
     if data is None:
         return
 
-    print(data)
     try:
         post(url, {"uuid": device, "data": data})
         print("data posted")
