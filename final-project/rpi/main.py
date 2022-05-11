@@ -2,6 +2,8 @@ from bluepy.btle import UUID, Peripheral
 from time import sleep
 from requests import get, post
 from struct import unpack
+from json import dumps
+
 
 devices = []
 dataServiceUUID = "19b10000-e8f2-537e-4f6c-d104768a1214"
@@ -13,7 +15,7 @@ def get_device_data(device):
         dataService = peripheral.getServiceByUUID(dataServiceUUID)
         data = {}
         for characteristic in dataService.getCharacteristics():
-            data[characteristic] = unpack('f', characteristic.read())[0]
+            data[characteristic.uuid] = unpack('f', characteristic.read())[0]
         return data
     except:
         print("Error fetching data via BLE")
@@ -33,7 +35,8 @@ def post_device_data(url, device, data):
         return
 
     try:
-        post(url, {"uuid": device, "data": data})
+        post(url, {}, {"uuid": device, "data": dumps(data)})
+        print("data posted")
     except:
         print("data post to failed")
 
