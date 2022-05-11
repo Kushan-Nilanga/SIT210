@@ -15,8 +15,7 @@ export default async function handler(req, res) {
     const container_uuid = payload.uuid;
     const data = payload.data || null;
 
-    console.log(req.body);
-    db.data.container[container_uuid].logs.push(data);
+    db.data.container[container_uuid].logs.push(JSON.parse(data));
 
     res.status(200).json(db.data.container[container_uuid]);
 
