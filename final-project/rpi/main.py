@@ -15,7 +15,8 @@ def get_device_data(device):
         dataService = peripheral.getServiceByUUID(dataServiceUUID)
         data = {}
         for characteristic in dataService.getCharacteristics():
-            data[characteristic.uuid] = unpack('f', characteristic.read())[0]
+            data[str(characteristic.uuid)] = unpack(
+                'f', characteristic.read())[0]
         return data
     except:
         print("Error fetching data via BLE")
