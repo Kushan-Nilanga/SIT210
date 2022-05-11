@@ -11,10 +11,11 @@ export default async function handler(req, res) {
     await db.read();
     db.data ||= { container: {} };
 
-    const payload = req.body.payload;
+    const payload = req.body;
     const container_uuid = payload.uuid;
     const data = payload.data || null;
 
+    console.log(req.body);
     db.data.container[container_uuid].logs.push(data);
 
     res.status(200).json(db.data.container[container_uuid]);

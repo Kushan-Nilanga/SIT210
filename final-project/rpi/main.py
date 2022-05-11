@@ -33,7 +33,7 @@ def post_device_data(url, device, data):
         return
 
     try:
-        post(url, {"payload": {"uuid": device, "data": data}})
+        post(url, {"uuid": device, "data": data})
     except:
         print("data post to failed")
 
