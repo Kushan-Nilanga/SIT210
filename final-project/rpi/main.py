@@ -36,7 +36,7 @@ def post_device_data(url, device, data):
         return
 
     try:
-        post(url, {"uuid": device, "data": data})
+        post(url, {"uuid": device, "data": dumps(data)})
         print("data posted")
     except:
         print("data post to failed")
