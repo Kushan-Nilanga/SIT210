@@ -5,6 +5,5 @@
     "files.associations": {
         "*.ino": "cpp"
     },
-    "particle.targetPlatform": "argon",
-    "particle.targetDevice": "my-particle"
+    "particle.targetPlatform": "photon"
 }
