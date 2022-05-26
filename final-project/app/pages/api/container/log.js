@@ -18,6 +18,7 @@ export default async function handler(req, res) {
     var parsed = JSON.parse(data);
 
     var keyed = {
+        time: parsed["time"],
         tem: parsed["19b10001-e8f2-537e-4f6c-d104768a1214"],
         hum: parsed["19b10002-e8f2-537e-4f6c-d104768a1214"],
         dpt: parsed["19b10003-e8f2-537e-4f6c-d104768a1214"],

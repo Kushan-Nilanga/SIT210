@@ -1,8 +1,8 @@
 
 #include "ada_dht.h" // DHT library by AdaFruit
 
-#define DHTPIN 5 // pin that DHT11 is connected to
-#define DHTTYPE DHT11 // our sensor is DHT11
+#define DHTPIN 4 // pin that DHT11 is connected to
+#define DHTTYPE DHT22 // our sensor is DHT11
 
 int temperature; // int variable to hold temperature
 int humidity; // int variable to hold humidity
