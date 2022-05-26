@@ -1,94 +1,98 @@
-/*
- * Project argon
- * Description:
- * Author:
- * Date:
- */
+ // DHT library by AdaFruit
+#include "ada_dht.h"
 
-// maximum number of expected bluetooth devices 
-const size_t SCAN_RESULT_MAX = 30;
+// pin that DHT11 is connected to
+#define DHTPIN D4 
 
-// our peripheral device
-String Uuid = "2932878e-0000-11ec-9d64-0242ac120002"; 
-BleUuid serviceUuid(Uuid);
+// our dht sensor is DHT22
+#define DHTTYPE DHT22 
 
-// characteristic to get data
-BleCharacteristic temCharacteristic;
-BleCharacteristic humCharacteristic;
-BleCharacteristic dptCharacteristic;
+// ultrasonic sensor pins
+#define HCSR04_PIN_TRIG	D2
+#define HCSR04_PIN_ECHO	D3
 
-// peer
-BlePeerDevice peer;
+// defining our DHT sensor using the AdaFruit library
+// the library will handle I2C communication between the
+// sensor and particle argon
+DHT dht(DHTPIN, DHTTYPE); 
 
-// characteristic data handler
-void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context);
+// main BLE Service to advertise
+const BleUuid serviceUuid("19b10000-e8f2-537e-4f6c-d104768a1214");
 
-// setup() runs once, when the device is first turned on.
-void setup(){
-    Serial.begin(9600);
-    Serial.println("Serial Began");
-    BLE.on();
+// setup BLE Services
+// const BleUuid temService("19b10001-e8f2-537e-4f6c-d104768a1214");
+// const BleUuid humService("19b10002-e8f2-537e-4f6c-d104768a1214");
+// const BleUuid dptService("19b10003-e8f2-537e-4f6c-d104768a1214");
 
-    // attaching handler to callback on data in characteristic
-    temCharacteristic.onDataReceived(onDataReceived, NULL);
-    humCharacteristic.onDataReceived(onDataReceived, NULL);
-    dptCharacteristic.onDataReceived(onDataReceived, NULL);
+// Setup BLE Characteristics 
+BleCharacteristic tem("tem", BleCharacteristicProperty::READ, 
+  BleUuid("19b10001-e8f2-537e-4f6c-d104768a1214"), serviceUuid);
+BleCharacteristic hum("hum", BleCharacteristicProperty::READ, 
+  BleUuid("19b10002-e8f2-537e-4f6c-d104768a1214"), serviceUuid);
+BleCharacteristic dpt("dpt", BleCharacteristicProperty::READ, 
+  BleUuid("19b10003-e8f2-537e-4f6c-d104768a1214"), serviceUuid);
+
+float humVal = 0;
+float temVal = 0;
+float dptVal = 0;
+
+void setup() {
+  // Serial
+  Serial.begin(9600);
+
+  // Setting device name
+  BLE.setDeviceName("Container");
+  Serial.println(BLE.address().toString());
+
+
+  // Adding characteristics to BLE package
+  BLE.addCharacteristic(tem);
+  BLE.addCharacteristic(hum);
+  BLE.addCharacteristic(dpt);
+
+  // Advertising
+  BleAdvertisingData advData;
+  advData.appendServiceUUID(serviceUuid);
+  BLE.advertise(&advData);
+
+  // starting I2C connection between the DHT11 and argon
+  dht.begin();
+
+  // usltrasonic pins
+  pinMode(HCSR04_PIN_TRIG, OUTPUT);
+  pinMode(HCSR04_PIN_ECHO, INPUT);
 }
 
-// loop() runs over and over again, as quickly as it can execute.
-void loop(){
-    // scanning for devices
-    BleScanResult scanResults[SCAN_RESULT_MAX];
-    int count = BLE.scan(scanResults, SCAN_RESULT_MAX);
+void loop() {
 
+  // when a device is connected to the device
+  while(BLE.connected()){
 
-    Serial.printlnf("devices %d", count);
+    // distance
+    float timeTaken;
+    digitalWrite(HCSR04_PIN_TRIG, LOW);
+    delayMicroseconds(2);
+    digitalWrite(HCSR04_PIN_TRIG, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(HCSR04_PIN_TRIG, LOW);
+    timeTaken = pulseIn(HCSR04_PIN_ECHO, HIGH);//determine distance of wave
+    dptVal = (timeTaken/2)/29.1;//using timeTaken calc distance of object
 
-    // going through each of the device
-    for(int i = 0; i < count; i++){
-        const size_t a = 8;
-        BleUuid *foundUUID = (BleUuid*) malloc(a * sizeof(BleUuid));
+    // accessing temperature in celcius format
+    temVal = dht.getTempCelcius();
 
-        // getting Uuids of advertised services
-        size_t len = scanResults[i].advertisingData.serviceUUID(foundUUID, (size_t)sizeof(*foundUUID));
+    // accessing humidity in percentage
+    humVal = dht.getHumidity();
 
-        // going through each of the services
-        for(size_t j = 0; j < len; j++){
+    // Setting values
+    hum.setValue(humVal);
+    tem.setValue(temVal);
+    dpt.setValue(dptVal);
 
-            // if the advertised service is our data service collect data
-            if(*(foundUUID+j) == serviceUuid){
+    // printing output
+    Serial.printf("temp: %f, hum: %f, dpt: %f\n", temVal, humVal, dptVal);
 
-                // address of the device
-                BleAddress peerAddress = scanResults[i].address; 
-
-                // connecting to the device
-                peer = BLE.connect(peerAddress);
-
-                // sendind data to API if the device is connected
-                if(BLE.connected()){
-                    bool tem = peer.getCharacteristicByUUID(temCharacteristic, BleUuid("2e0d3c00-0001-11ec-9d64-0242ac120002"));
-
-                    bool hum = peer.getCharacteristicByUUID(humCharacteristic, BleUuid("2e0d3c00-0002-11ec-9d64-0242ac120002"));
-
-                    bool dpt = peer.getCharacteristicByUUID(dptCharacteristic, BleUuid("2e0d3c00-0003-11ec-9d64-0242ac120002"));
-
-                    Serial.printlnf("Temp %d", tem);
-                    Serial.printlnf("Humi %d", hum);
-                    Serial.printlnf("Dept %d", dpt);
-
-                    BLE.disconnect(peer);
-                    // disconnecting the connected device
-                }
-            }
-        }
-        // free the uuid array
-        free(foundUUID);
-    }
-
-    Serial.println();
-}
-
-// send data to the server
-void onDataReceived(const uint8_t* data, size_t len, const BlePeerDevice& peer, void* context) {
-    Serial.println("data received");
+    delay(2s);
+  }
+  delay(1s);
 }

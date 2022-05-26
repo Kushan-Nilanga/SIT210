@@ -1,7 +1,7 @@
 
 #include "ada_dht.h" // DHT library by AdaFruit
 
-#define DHTPIN 4 // pin that DHT11 is connected to
+#define DHTPIN D4 // pin that DHT11 is connected to
 #define DHTTYPE DHT22 // our sensor is DHT11
 #define HCSR04_PIN_TRIG	D2
 #define HCSR04_PIN_ECHO	D3
@@ -50,16 +50,16 @@ void loop()
     humidity = dht.getHumidity();
 
     // printing the read values to serial monitor for debugging
-    Serial.printlnf("Temp: %d, Hum: %d, Depth, %d", temperature, humidity, distance);
+    Serial.printlnf("Depth: %f, Temp: %d, Hum: %d", distance, temperature, humidity);
 
-    // publishing the temperature to 'temp' webhook in particle console
-    Particle.publish("temp", String(temperature), PRIVATE);
+    // // publishing the temperature to 'temp' webhook in particle console
+    // Particle.publish("temp", String(temperature), PRIVATE);
 
-    // pblishing the humidity to 'hum' webhook in particle console
-    Particle.publish("hum", String(humidity), PRIVATE);
+    // // pblishing the humidity to 'hum' webhook in particle console
+    // Particle.publish("hum", String(humidity), PRIVATE);
 
     // repeating the loop after 2000 miliseconds
-    delay(2000);
+    delay(1000);
 }
         
         
