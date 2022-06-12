@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState, useRef } from "react";
+import Head from "next/head";
+
+import { Card, Container } from "react-bootstrap";
 
 /**
  * Chart imports
@@ -30,8 +33,8 @@ ChartJS.register(
 
 const options = {
     response: true,
-    tension: 0.3,
-    elements: { point: { radius: 2 } },
+    tension: 0.4,
+    elements: { point: { radius: 1 } },
     scales: {
         x: {
             type: "time",
@@ -56,23 +59,51 @@ export default function () {
 
     return (
         <div style={{ width: "80%", margin: "0 auto", paddingTop: "2%" }}>
+            <Head>
+                <title>{container.name}</title>
+            </Head>
             <h5>
                 <a href="\"> &#60; Home </a>
             </h5>
             <h1>{container.name}</h1>
-            <h6>uuid: {uuid}</h6>
 
-            <div id="charts">
-                <div style={{ width: "50%" }}>
-                    <TemperatureGraph data={container.logs} />
+            <Card style={{ width: "100%" }}>
+                <div style={{ margin: "1em" }}>
+                    <h5>General Information</h5>
+                    <b>UUID</b>: {uuid} <br />
+                    <b>Container depth</b>: {container.con_depth} cm
+                    {container.temp_thresh && (
+                        <div>
+                            <b>Temperature threshold:</b>{" "}
+                            {container.temp_thresh} &#176;C
+                            <br />
+                        </div>
+                    )}
+                    {container.hum_thresh && (
+                        <div>
+                            <b>Humidity threshold:</b> {container.hum_thresh} %
+                            <br />
+                        </div>
+                    )}
+                    {container.amt_thresh && (
+                        <div>
+                            <b>Amount threshold:</b> {container.amt_thresh} %
+                            <br />
+                        </div>
+                    )}
                 </div>
-                <div style={{ width: "50%" }}>
-                    <DepthGraph data={container.logs} />
-                </div>
-                <div style={{ width: "50%" }}>
-                    <HumidityGraph data={container.logs} />
-                </div>
-            </div>
+            </Card>
+            <br />
+            <Card
+                id="charts"
+                style={{ width: "100%", padding: "1em", marginBottom: "1em" }}
+            >
+                <TemperatureGraph data={container.logs} />
+
+                <DepthGraph data={container.logs} limit={container.con_depth} />
+
+                <HumidityGraph data={container.logs} />
+            </Card>
         </div>
     );
 }
@@ -115,7 +146,7 @@ function DepthGraph(props) {
         if (props.data === undefined) return;
         var arr = [];
         props.data.forEach((element) => {
-            arr.push({ x: element.time, y: 55 - element.dpt });
+            arr.push({ x: element.time, y: ((props.limit - element.dpt)*100+10)/props.limit });
         });
         setData(arr);
     }, [props.data]);

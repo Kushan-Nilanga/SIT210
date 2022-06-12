@@ -4,13 +4,16 @@
 
 #include "Particle.h"
 #line 1 "/Users/donkushanathalage/Desktop/SIT210/final-project/argon/src/argon.ino"
- // DHT library by AdaFruit
+// DHT library by AdaFruit
 #include "ada_dht.h"
 
-// pin that DHT11 is connected to
 void setup();
 void loop();
-#line 5 "/Users/donkushanathalage/Desktop/SIT210/final-project/argon/src/argon.ino"
+#line 4 "/Users/donkushanathalage/Desktop/SIT210/final-project/argon/src/argon.ino"
+SYSTEM_THREAD(ENABLED);
+SYSTEM_MODE(AUTOMATIC);
+
+// pin that DHT11 is connected to
 #define DHTPIN D4 
 
 // our dht sensor is DHT22
@@ -48,11 +51,11 @@ float dptVal = 0;
 void setup() {
   // Serial
   Serial.begin(9600);
+  while(!Serial);
 
   // Setting device name
   BLE.setDeviceName("Container");
   Serial.println(BLE.address().toString());
-
 
   // Adding characteristics to BLE package
   BLE.addCharacteristic(tem);
@@ -70,12 +73,24 @@ void setup() {
   // usltrasonic pins
   pinMode(HCSR04_PIN_TRIG, OUTPUT);
   pinMode(HCSR04_PIN_ECHO, INPUT);
+
+  hum.setValue(humVal);
+  tem.setValue(temVal);
+  dpt.setValue(dptVal);
+
+  pinMode(A1, OUTPUT);
+  pinMode(A2, OUTPUT);
+  pinMode(A3, OUTPUT);
 }
 
 void loop() {
+  digitalWrite(A2, HIGH);
+  digitalWrite(A1, LOW);
 
   // when a device is connected to the device
-  while(BLE.connected()){
+  while(!BLE.connected()){
+    digitalWrite(A1, HIGH);
+    digitalWrite(A2, LOW);
 
     // distance
     float timeTaken;
@@ -101,7 +116,8 @@ void loop() {
     // printing output
     Serial.printf("temp: %f, hum: %f, dpt: %f\n", temVal, humVal, dptVal);
 
-    delay(2s);
+    delay(10);
+
   }
   delay(1s);
 }

@@ -13,12 +13,10 @@ export default async function handler(req, res) {
     db.data ||= { container: {} };
 
     const payload = req.body.payload;
+    payload["logs"] = [];
     const container_id = payload.id;
 
-    db.data.container[container_id] = {
-        name: payload.name,
-        logs: [],
-    };
+    db.data.container[container_id] = payload;
 
     res.status(200).json(db.data.container[container_id]);
     await db.write();

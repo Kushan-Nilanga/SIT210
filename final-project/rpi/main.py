@@ -44,12 +44,12 @@ def post_device_data(url, device, data):
 
 
 def loop():
-    devices = get_device_uuids("http://192.168.0.104:3000/api/container/uuids")
+    devices = get_device_uuids("http://<IP Address>:3000/api/container/uuids")
     for device in devices:
         data = get_device_data(device)
         if data is not None:    
             post_device_data(
-            "http://192.168.0.104:3000/api/container/log",
+            "http://<IP Address>:3000/api/container/log",
             device,
             data)
 

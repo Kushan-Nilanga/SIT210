@@ -24,6 +24,23 @@ export default async function handler(req, res) {
         dpt: parsed["19b10003-e8f2-537e-4f6c-d104768a1214"],
     };
 
+    if (keyed.dpt > db.data.container[container_uuid].con_depth) {
+        return res.status(200).json({ discarded: "lid is open" });
+    }
+
+    // invalid data ranges
+    if (keyed.dpt < 0) {
+        return res.status(200).json({ discarded: "invalid data range" });
+    }
+
+    if (keyed.hum < 0 || keyed.hum > 100) {
+        return res.status(200).json({ discarded: "invalid data range" });
+    }
+
+    if (keyed.tem < -40 || keyed.tem > 60) {
+        return res.status(200).json({ discarded: "invalid data range" });
+    }
+
     db.data.container[container_uuid].logs.push(keyed);
 
     res.status(200).json(db.data.container[container_uuid]);
